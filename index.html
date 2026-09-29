@@ -1,0 +1,878 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Conti in tasca</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Conti">
+<meta name="theme-color" content="#F1F4EF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#101612" media="(prefers-color-scheme: dark)">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F1F4EF; --surface:#FFFFFF; --ink:#17221D; --muted:#5A6A62; --line:#D8E0D6;
+  --green:#2C6A4D; --green-soft:#DFEDE4; --amber:#9A6508; --amber-soft:#F5E8CC;
+  --red:#B3261E; --red-soft:#F8DDD9; --focus:#2C6A4D;
+  --display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --body:"Figtree", "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#101612; --surface:#18201B; --ink:#E3EAE5; --muted:#98A79F; --line:#2A352F;
+    --green:#7CC49C; --green-soft:#1D3127; --amber:#E3AE4B; --amber-soft:#382D15;
+    --red:#F28B7F; --red-soft:#3C1F1B; --focus:#7CC49C; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#101612; --surface:#18201B; --ink:#E3EAE5; --muted:#98A79F; --line:#2A352F;
+  --green:#7CC49C; --green-soft:#1D3127; --amber:#E3AE4B; --amber-soft:#382D15;
+  --red:#F28B7F; --red-soft:#3C1F1B; --focus:#7CC49C; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 var(--body);min-height:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:6px}
+.wrap{max-width:560px;margin:0 auto;padding:0 18px calc(96px + env(safe-area-inset-bottom,0px))}
+header.top{display:flex;align-items:center;justify-content:space-between;padding:14px 0 6px}
+header.top h1{font:700 18px/1.2 var(--display);margin:0;letter-spacing:-.01em}
+header.top .sub{color:var(--muted);font-size:13px}
+.iconbtn{background:none;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:14px;cursor:pointer;color:var(--ink)}
+.banner{background:var(--amber-soft);color:var(--ink);border-radius:10px;padding:10px 12px;font-size:14px;margin:8px 0}
+.hero{padding:18px 0 22px;border-bottom:1px solid var(--line)}
+.hero .lbl{font-size:15px;color:var(--muted);margin:0 0 2px}
+.hero .big{font:800 clamp(52px,16vw,76px)/1 var(--display);letter-spacing:-.03em;font-variant-numeric:tabular-nums;margin:0}
+.hero .meter{height:6px;border-radius:3px;margin:14px 0 10px;background:var(--line);overflow:hidden}
+.hero .meter span{display:block;height:100%;border-radius:3px}
+.hero .why{font-size:15px;margin:0;max-width:60ch}
+.tone-ok .big{color:var(--green)} .tone-ok .meter span{background:var(--green)}
+.tone-warn .big{color:var(--amber)} .tone-warn .meter span{background:var(--amber)}
+.tone-bad .big{color:var(--red)} .tone-bad .meter span{background:var(--red)}
+section.blk{padding:18px 0;border-bottom:1px solid var(--line)}
+section.blk:last-child{border-bottom:0}
+h2{font:700 19px/1.25 var(--display);margin:0 0 10px;letter-spacing:-.01em}
+h3{font:600 16px/1.3 var(--body);margin:14px 0 6px}
+p{margin:0 0 10px}
+.muted{color:var(--muted)} .small{font-size:14px}
+.row{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+.row:first-of-type{border-top:0}
+.row .grow{flex:1;min-width:0}
+.row .name{font-weight:600;overflow-wrap:anywhere}
+.row .meta{font-size:13px;color:var(--muted)}
+.amt{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+.amt.neg{color:var(--red)} .amt.pos{color:var(--green)}
+.tick{width:28px;height:28px;border-radius:8px;border:2px solid var(--line);background:var(--surface);display:grid;place-items:center;cursor:pointer;flex:none;padding:0}
+.tick.on{background:var(--green);border-color:var(--green);color:var(--paper)}
+.tick svg{width:16px;height:16px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.dot.late{background:var(--red)} .dot.soon{background:var(--amber)}
+.sumline{display:flex;justify-content:space-between;gap:12px;padding:6px 0;font-variant-numeric:tabular-nums}
+.sumline.total{font-weight:700;border-top:1px solid var(--line);margin-top:4px;padding-top:10px}
+.btn{appearance:none;border:0;border-radius:10px;padding:12px 16px;font-weight:600;cursor:pointer;background:var(--green);color:var(--paper)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.danger{background:transparent;color:var(--red);border:1px solid var(--red)}
+.btn.small{padding:8px 12px;font-size:14px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+label.f{display:block;margin:10px 0}
+label.f span{display:block;font-size:14px;color:var(--muted);margin-bottom:4px}
+input[type=text],input[type=number],input[type=date],input[type=month],select,textarea{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+textarea{min-height:96px;resize:vertical}
+.check{display:flex;gap:8px;align-items:center;margin:8px 0;font-size:15px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin:6px 0}
+.bar span{display:block;height:100%;background:var(--green)}
+.goal{padding:14px 0;border-top:1px solid var(--line)}
+.goal:first-of-type{border-top:0}
+.pill{display:inline-block;font-size:13px;border-radius:999px;padding:2px 9px;background:var(--green-soft);color:var(--green)}
+.pill.warn{background:var(--amber-soft);color:var(--amber)} .pill.bad{background:var(--red-soft);color:var(--red)}
+.verdict{border-radius:12px;padding:14px;margin-top:12px}
+.verdict h3{font:800 24px/1.1 var(--display);margin:0 0 8px}
+.verdict.v-si{background:var(--green-soft)} .verdict.v-si h3{color:var(--green)}
+.verdict.v-attesa,.verdict.v-aspetta,.verdict.v-obiettivo{background:var(--amber-soft)}
+.verdict.v-attesa h3,.verdict.v-aspetta h3,.verdict.v-obiettivo h3{color:var(--amber)}
+.verdict.v-no{background:var(--red-soft)} .verdict.v-no h3{color:var(--red)}
+.verdict ul{margin:0;padding-left:18px} .verdict li{margin:4px 0}
+.answer{white-space:pre-wrap;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:12px;min-height:3em}
+.rules li{margin:6px 0}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:10}
+nav.tabs .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+nav.tabs button{background:none;border:0;padding:12px 2px 13px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border-top:3px solid transparent}
+nav.tabs button[aria-current="page"]{color:var(--ink);border-top-color:var(--green)}
+.sheet-bg{position:fixed;inset:0;background:rgba(10,16,12,.45);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--paper);width:100%;max-width:560px;max-height:88vh;overflow:auto;border-radius:16px 16px 0 0;padding:18px 18px calc(22px + env(safe-area-inset-bottom,0px))}
+.sheet h2{margin-bottom:4px}
+.monthnav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.monthnav b{font-weight:600;text-transform:capitalize}
+.empty{padding:28px 0}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:10px;font-size:14px;z-index:30;max-width:90vw}
+.tbl{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:14px}
+.tbl th,.tbl td{text-align:right;padding:6px 4px;border-top:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left}
+.tblwrap{overflow-x:auto}
+@media (prefers-reduced-motion: no-preference){.hero .meter span{transition:width .5s ease}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div><h1>Conti in tasca</h1><div class="sub" id="subtitle">Caricamento…</div></div>
+    <button class="iconbtn" id="btnSettings" aria-label="Impostazioni">Impostazioni</button>
+  </header>
+  <div id="banner"></div>
+  <main id="main"><div class="empty muted">Caricamento dei tuoi dati…</div></main>
+</div>
+<nav class="tabs" aria-label="Sezioni"><div class="in">
+  <button data-tab="oggi">Oggi</button>
+  <button data-tab="fisse">Fisse</button>
+  <button data-tab="spese">Spese</button>
+  <button data-tab="obiettivi">Obiettivi</button>
+  <button data-tab="chiedi">Chiedi</button>
+</div></nav>
+<div id="sheetRoot"></div>
+
+<script>
+/* ---------- utilità ---------- */
+const EUR = new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR'});
+const fmtE = n => (n==null || !isFinite(n)) ? '—' : EUR.format(n);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num = v => { const x = parseFloat(String(v ?? '').replace(/\s/g,'').replace(/\.(?=\d{3}(\D|$))/g,'').replace(',','.')); return isFinite(x) ? x : NaN; };
+const r2 = n => Math.round(n*100)/100;
+const newId = () => ((crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now().toString(36)+Math.random().toString(36).slice(2))).replace(/-/g,'').slice(0,16);
+const clone = o => JSON.parse(JSON.stringify(o));
+function ymd(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function pd(s){ const [y,m,d] = s.split('-').map(Number); return new Date(y,(m||1)-1,d||1,12); }
+const today = () => ymd(new Date());
+function addDays(s,n){ const d = pd(s); d.setDate(d.getDate()+n); return ymd(d); }
+const mkey = s => s.slice(0,7);
+function dim(y,m){ return new Date(y,m,0).getDate(); }
+function dueIn(giorno,key){ const [y,m] = key.split('-').map(Number); return key+'-'+String(Math.min(giorno,dim(y,m))).padStart(2,'0'); }
+function shiftKey(key,n){ let [y,m] = key.split('-').map(Number); m += n; while(m>12){m-=12;y++;} while(m<1){m+=12;y--;} return y+'-'+String(m).padStart(2,'0'); }
+const monthIndex = key => { const [y,m] = key.split('-').map(Number); return y*12+m; };
+const fmtPct = n => n.toLocaleString('it-IT',{maximumFractionDigits:1})+'%';
+const fmtD = s => pd(s).toLocaleDateString('it-IT',{day:'numeric',month:'long'});
+const fmtMese = key => pd(key+'-01').toLocaleDateString('it-IT',{month:'long',year:'numeric'});
+const minStr = (a,b) => a<b ? a : b;
+
+/* ---------- stato ---------- */
+const S = { mode:'loading', db:null, uid:null, sample:null, downloads:null, config:null, mesi:{}, tab:'oggi', viewKey:null, askCtl:null, askText:'', calc:null };
+const SIGN = {entrata:1, prelievo:1, fissa:-1, extra:-1, accantonamento:-1};
+const CATEGORIE = ['Spesa alimentare','Carburante','Trasporti e parcheggi','Salute','Bar e ristoranti','Abbigliamento','Svago','Viaggi','Elettronica','Casa','Regali','Animali','Altro'];
+const ESSENZIALI = ['Spesa alimentare','Carburante','Trasporti e parcheggi','Salute'];
+
+function emptyConfig(){
+  return { versione:1, impostazioni:{ nettoPrudente:1800, cuscinetto:50, essenziali:200, rateContoComune:0,
+    soglie:{ rateMaxPct:30, sogliaExtra:100, sogliaObiettivo:500, provaMesi:3, straordinariePct:70 } },
+    accrediti:[{id:'stipendio',nome:'Stipendio',importo:1800,giorno:15}], fisse:[], obiettivi:[], riconciliazione:null };
+}
+
+/* ---------- persistenza ---------- */
+const queues = {};
+function enqueue(key, fn){ const p = (queues[key]||Promise.resolve()).then(fn).catch(e => { console.error(e); toast(e && e.code==='quota_exceeded' ? 'Spazio dati esaurito: esporta un backup e scrivi a Claude.' : 'Salvataggio non riuscito, riprova.'); }); queues[key]=p; return p; }
+function cfgPath(){ return 'data/users/'+S.uid+'/config'; }
+function saveConfig(){
+  if(S.mode==='remote'){ const data = clone(S.config); return enqueue('config', () => S.db.doc(cfgPath()).set(data)); }
+  try{ localStorage.setItem('cit:config', JSON.stringify(S.config)); }catch(e){ toast('Salvataggio non riuscito: esporta subito un backup.'); }
+  return Promise.resolve();
+}
+function saveMese(key){
+  if(!S.mesi[key]) S.mesi[key] = {mese:key, movimenti:[]};
+  if(S.mode==='remote'){ const data = clone(S.mesi[key]); return enqueue('m'+key, () => S.db.doc(cfgPath()).collection('mesi').doc(key).set(data)); }
+  try{ localStorage.setItem('cit:mesi', JSON.stringify(S.mesi)); }catch(e){ toast('Salvataggio non riuscito: esporta subito un backup.'); }
+  return Promise.resolve();
+}
+
+async function init(){
+  wireStatic();
+  S.mode='local';
+  try{ S.config = JSON.parse(localStorage.getItem('cit:config')||'null'); S.mesi = JSON.parse(localStorage.getItem('cit:mesi')||'{}'); }catch(e){ S.config=null; S.mesi={}; }
+  try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); }catch(e){}
+  render();
+  if('serviceWorker' in navigator){ navigator.serviceWorker.register('./sw.js').catch(()=>{}); }
+}
+async function importaBackup(file){
+  const d = JSON.parse(await file.text());
+  if(!d.config || !d.config.impostazioni) throw new Error('formato');
+  S.config = d.config; S.mesi = d.mesi || {};
+  await saveConfig(); await saveMese(Object.keys(S.mesi)[0] || mkey(today()));
+}
+
+/* ---------- movimenti ---------- */
+function movs(key){ return (S.mesi[key] && S.mesi[key].movimenti) || []; }
+function allMovs(){ return Object.values(S.mesi).flatMap(m => m.movimenti || []); }
+function addMov(m){
+  const key = mkey(m.data);
+  if(!S.mesi[key]) S.mesi[key] = {mese:key, movimenti:[]};
+  const mv = Object.assign({id:newId(), ts:Date.now()}, m); mv.importo = r2(mv.importo);
+  S.mesi[key].movimenti.push(mv);
+  return saveMese(key);
+}
+function delMov(id){
+  for(const key of Object.keys(S.mesi)){
+    const arr = S.mesi[key].movimenti || []; const i = arr.findIndex(x => x.id===id);
+    if(i>=0){ const [m] = arr.splice(i,1); saveMese(key); return m; }
+  }
+  return null;
+}
+function tickOf(fid,key){ return movs(key).filter(m => m.tipo==='fissa' && m.rif===fid); }
+function fissaAttiva(f,key){ return !(f.fine && f.fine < key) && !(f.dal && f.dal > key); }
+const ogniDi = f => (f.ogni && f.ogni > 1) ? f.ogni : 1;
+function inCiclo(f,key){ const n = ogniDi(f); if(n===1 || !f.ultimo) return true; const d = monthIndex(key) - monthIndex(f.ultimo); return d % n === 0; }
+function dovuta(f,key){ return fissaAttiva(f,key) && inCiclo(f,key); }
+function prossimaScadenza(f,key){ for(let i=0;i<=24;i++){ const k2 = shiftKey(key,i); if(dovuta(f,k2) && !tickOf(f.id,k2).length) return dueIn(f.giorno,k2); } return null; }
+const FREQ = {1:'mensile',2:'bimestrale',3:'trimestrale',6:'semestrale',12:'annuale'};
+function goalAttivo(g,key){ return (g.quota||0)>0 && (g.accantonato||0) < g.target && !(g.dal && g.dal > key) && !(g.scadenza && mkey(g.scadenza) < key); }
+function versatoMese(gid,key){ return movs(key).filter(m => m.tipo==='accantonamento' && m.rif===gid).reduce((a,m)=>a+m.importo,0); }
+function necessarioMese(g, key){
+  const start = (g.dal && g.dal > key) ? g.dal : key;
+  const resto = Math.max(0, g.target - (g.accantonato||0));
+  if(!g.scadenza) return null;
+  const mesi = Math.max(1, monthIndex(mkey(g.scadenza)) - monthIndex(start));
+  return r2(resto / mesi);
+}
+
+function received(aid, from, to){ return allMovs().some(m => m.tipo==='entrata' && m.rif===aid && m.data>=from && m.data<=to); }
+function nextAccredito(t){
+  let best=null; const k=mkey(t);
+  for(const a of (S.config.accrediti||[])){
+    for(const kk of [shiftKey(k,-1), k, shiftKey(k,1)]){
+      const P = dueIn(a.giorno, kk); let cand=null, late=false;
+      if(P < t){ if(P >= addDays(t,-20) && !received(a.id, addDays(P,-25), minStr(t, addDays(P,15)))){ cand=t; late=true; } }
+      else if(!received(a.id, addDays(P,-25), t)) cand=P;
+      if(cand){ if(!best || cand < best.data) best = {data:cand, a, late, prevista:P}; break; }
+    }
+  }
+  return best;
+}
+
+/* ---------- calcoli principali ---------- */
+function calc(){
+  const c=S.config, t=today(), k=mkey(t), imp=c.impostazioni;
+  let cassa=null;
+  if(c.riconciliazione){
+    cassa = c.riconciliazione.saldoConti - (c.riconciliazione.amexDaAddebitare||0);
+    // conta solo i movimenti registrati dopo l'ultimo saldo e con data non precedente: quelli più vecchi sono già nel saldo reale
+    for(const m of allMovs()) if((m.ts||0) > c.riconciliazione.ts && m.data >= c.riconciliazione.data) cassa += SIGN[m.tipo]*m.importo;
+    cassa = r2(cassa);
+  }
+  const acc = nextAccredito(t);
+  const H = acc ? acc.data : addDays(t,31);
+  const pending=[];
+  for(const f of c.fisse){
+    let due=null;
+    if(dovuta(f,k) && !tickOf(f.id,k).length) due = dueIn(f.giorno,k);
+    else { const nk=shiftKey(k,1); if(dovuta(f,nk) && !tickOf(f.id,nk).length) due = dueIn(f.giorno,nk); }
+    // le spese che scadono lo stesso giorno dell'entrata si pagano con quell'entrata
+    if(due && due < H) pending.push({f, due, late: due < t});
+  }
+  pending.sort((a,b) => a.due.localeCompare(b.due));
+  const pendingTot = r2(pending.reduce((a,p)=>a+p.f.importo,0));
+  const goals = c.obiettivi.filter(g => goalAttivo(g,k));
+  const mancanti = goals.map(g => ({g, manca: r2(Math.max(0, g.quota - versatoMese(g.id,k)))})).filter(x => x.manca>0);
+  const mancTot = r2(mancanti.reduce((a,x)=>a+x.manca,0));
+  const spendCassa = cassa==null ? null : r2(cassa - pendingTot - mancTot - (imp.cuscinetto||0));
+  let fisseMese=0;
+  // le spese non mensili pesano sul budget come quota mensile (es. trimestrale = importo/3), l'addebito vero conta solo sulla liquidità
+  for(const f of c.fisse){ if(!fissaAttiva(f,k)) continue; if(ogniDi(f)>1){ fisseMese += f.importo/ogniDi(f); continue; } const tk=tickOf(f.id,k); fisseMese += tk.length ? tk.reduce((a,m)=>a+m.importo,0) : f.importo; }
+  fisseMese = r2(fisseMese);
+  const quote = r2(goals.reduce((a,g)=>a+g.quota,0));
+  const budgetVar = r2(imp.nettoPrudente - fisseMese - quote);
+  const extra = movs(k).filter(m => m.tipo==='extra');
+  const extraMese = r2(extra.reduce((a,m)=>a+m.importo,0));
+  const essMese = r2(extra.filter(m => ESSENZIALI.includes(m.cat)).reduce((a,m)=>a+m.importo,0));
+  const rimasto = r2(budgetVar - extraMese);
+  const puoi = spendCassa==null ? rimasto : Math.min(spendCassa, rimasto);
+  const limite = spendCassa!=null && spendCassa < rimasto ? 'cassa' : 'budget';
+  const rateEsistenti = r2(c.fisse.filter(f => f.rata && fissaAttiva(f,k)).reduce((a,f)=>a+f.importo,0) + (imp.rateContoComune||0));
+  const quoteRegime = r2(c.obiettivi.filter(g => (g.quota||0)>0 && (g.accantonato||0) < g.target && !(g.scadenza && mkey(g.scadenza) < k)).reduce((a,g)=>a+g.quota,0));
+  // mese tipo: senza le spese una tantum (inizio e fine nello stesso mese) e senza quelle che finiscono questo mese
+  let fisseRegime = 0;
+  for(const f of c.fisse){ if(!fissaAttiva(f,k) || (f.fine && f.fine <= k) ) continue; fisseRegime += f.importo/ogniDi(f); }
+  const strutturale = r2(imp.nettoPrudente - fisseRegime - quoteRegime - (imp.essenziali||0));
+  return {t,k,cassa,acc,H,pending,pendingTot,mancanti,mancTot,spendCassa,fisseMese,quote,quoteRegime,budgetVar,extraMese,essMese,rimasto,puoi,limite,rateEsistenti,strutturale};
+}
+
+function storico(n){
+  const out=[]; const k=mkey(today());
+  for(let i=n; i>=1; i--){
+    const key=shiftKey(k,-i); const ms=movs(key); if(!ms.length) continue;
+    const ent=ms.filter(m=>m.tipo==='entrata').reduce((a,m)=>a+m.importo,0);
+    const fis=ms.filter(m=>m.tipo==='fissa').reduce((a,m)=>a+m.importo,0);
+    const ext=ms.filter(m=>m.tipo==='extra').reduce((a,m)=>a+m.importo,0);
+    const acc=ms.filter(m=>m.tipo==='accantonamento').reduce((a,m)=>a+m.importo,0);
+    out.push({mese:key, entrate:r2(ent), fisse:r2(fis), extra:r2(ext), accantonato:r2(acc), saldo:r2(ent-fis-ext)});
+  }
+  return out;
+}
+
+function regole(){
+  const s=S.config.impostazioni.soglie;
+  return [
+    `R1 · Nessuna nuova rata se il mese tipo chiude in negativo o se le rate totali superano il ${s.rateMaxPct}% del netto.`,
+    `R2 · Ogni euro in entrata va prima alle spese fisse, poi agli accantonamenti, e solo dopo agli extra.`,
+    `R3 · Extra sotto ${fmtE(s.sogliaExtra)}: liberi se ci stanno. Da ${fmtE(s.sogliaExtra)} in su: 48 ore di attesa. Da ${fmtE(s.sogliaObiettivo)} in su: diventano un obiettivo pianificato.`,
+    `R4 · Il fondo di emergenza si tocca solo per imprevisti non rimandabili (salute, auto, casa, lavoro). Se lo usi, ricostituirlo è la priorità del mese dopo.`,
+    `R5 · Entrate straordinarie (rimborsi, bonus): ${s.straordinariePct}% a obiettivi e cuscinetto, il resto è libero.`,
+    `R6 · Un risparmio nuovo (es. sigarette) va su un obiettivo per ${s.provaMesi} mesi prima di diventare spendibile.`,
+    `R7 · La spesa con carta di credito conta il giorno in cui la fai. Sempre saldo integrale, mai revolving.`,
+    `R8 · Spese sanitarie in corso e psicologa sono intoccabili.`
+  ];
+}
+
+/* ---------- rendering ---------- */
+function wireStatic(){
+  document.querySelectorAll('nav.tabs button').forEach(b => b.addEventListener('click', () => { S.tab=b.dataset.tab; render(); window.scrollTo(0,0); }));
+  document.getElementById('btnSettings').addEventListener('click', () => { if(S.config) openSettings(); });
+}
+function render(){
+  document.querySelectorAll('nav.tabs button').forEach(b => { if(b.dataset.tab===S.tab) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current'); });
+  const banner = document.getElementById('banner');
+  let last=null; try{ last = localStorage.getItem('cit:lastBackup'); }catch(e){}
+  const giorni = last ? Math.round((pd(today()) - pd(last)) / 86400000) : null;
+  banner.innerHTML = (S.config && (giorni===null || giorni > 30)) ? `<div class="banner">${giorni===null ? 'Non hai ancora fatto un backup.' : 'Ultimo backup '+giorni+' giorni fa.'} I dati sono solo su questo telefono: esportali da Impostazioni e salvali su iCloud Drive.</div>` : '';
+  const main = document.getElementById('main');
+  if(!S.config){
+    document.getElementById('subtitle').textContent = 'Nessun dato';
+    main.innerHTML = `<div class="empty"><h2>Benvenuto</h2><p class="muted">Se hai un backup (il file .json), importalo: ritrovi tutti i tuoi dati. Altrimenti puoi partire da zero.</p><div class="btns"><label class="btn">Importa il backup<input type="file" id="impFirst" accept="application/json,.json" hidden></label><button class="btn ghost" id="startEmpty">Parti da zero</button></div></div>`;
+    main.querySelector('#impFirst').onchange = async e => { const f=e.target.files[0]; if(!f) return; try{ await importaBackup(f); render(); toast('Backup importato'); }catch(err){ toast('File non valido: serve un backup di Conti in tasca.'); } };
+    main.querySelector('#startEmpty').onclick = () => { S.config = emptyConfig(); saveConfig(); render(); };
+    return;
+  }
+  const t=today();
+  document.getElementById('subtitle').textContent = pd(t).toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long'});
+  if(!S.viewKey) S.viewKey = mkey(t);
+  const views = {oggi:viewOggi, fisse:viewFisse, spese:viewSpese, obiettivi:viewObiettivi, chiedi:viewChiedi};
+  (views[S.tab]||viewOggi)(main);
+}
+
+function viewOggi(main){
+  const x = calc(); const c=S.config;
+  let tone = 'tone-ok'; if(x.puoi < 0) tone='tone-bad'; else if(x.puoi < 50) tone='tone-warn';
+  const pct = x.budgetVar>0 ? Math.max(0, Math.min(100, x.rimasto / x.budgetVar * 100)) : 0;
+  let why;
+  if(x.cassa==null) why = `Questo è solo il budget del mese. Inserisci quanto hai sui conti per sapere quanto puoi spendere davvero fino al prossimo stipendio.`;
+  else if(x.limite==='cassa') why = `Limitato dai soldi sul conto: fino al ${fmtD(x.H)} devono ancora uscire ${fmtE(x.pendingTot)} di spese fisse${x.mancTot?` e ${fmtE(x.mancTot)} di accantonamenti`:''}.` + (x.puoi<0 ? ` Sul conto mancano ${fmtE(-x.puoi)} per coprirle: niente extra finché non arriva la prossima entrata.` : '');
+  else why = `Limitato dal budget di ${fmtMese(x.k)}: ${fmtE(x.budgetVar)} per spese variabili ed extra, già usati ${fmtE(x.extraMese)}.`;
+  const accTxt = x.acc ? (x.acc.late ? `${esc(x.acc.a.nome)}: previsto entro il ${fmtD(x.acc.prevista)}, non ancora segnato come arrivato.` : `${esc(x.acc.a.nome)} entro il ${fmtD(x.acc.data)} (data prudente).`) : 'Nessun accredito impostato.';
+  const hist = storico(6);
+  main.innerHTML = `
+  <div class="hero ${tone}">
+    <p class="lbl">Puoi spendere oggi</p>
+    <p class="big">${fmtE(x.puoi)}</p>
+    <div class="meter" aria-hidden="true"><span style="width:${pct}%"></span></div>
+    <p class="why">${why}</p>
+    <div class="btns">
+      <button class="btn" id="qAdd">Registra una spesa</button>
+      <button class="btn ghost" id="qRic">${x.cassa==null?'Inserisci saldo conti':'Aggiorna saldo reale'}</button>
+    </div>
+  </div>
+  <section class="blk">
+    <h2>Prossima entrata</h2>
+    <p>${accTxt}</p>
+    ${x.acc ? `<button class="btn ghost small" id="qInc">Segna come arrivato</button>` : ''}
+  </section>
+  <section class="blk">
+    <h2>Da pagare fino al ${fmtD(x.H)}</h2>
+    ${x.pending.length ? x.pending.map(p => `<div class="row"><div class="grow"><div class="name">${p.late?'<span class="dot late"></span>':''}${esc(p.f.nome)}</div><div class="meta">${p.late?'Scaduta il ':'Il '}${fmtD(p.due)} · ${esc(p.f.conto||'')}</div></div><div class="amt">${fmtE(p.f.importo)}</div></div>`).join('') : '<p class="muted">Niente in scadenza prima della prossima entrata.</p>'}
+    ${x.mancanti.length ? `<h3>Accantonamenti di ${fmtMese(x.k)} ancora da fare</h3>` + x.mancanti.map(m => `<div class="row"><div class="grow"><div class="name">${esc(m.g.nome)}</div></div><div class="amt">${fmtE(m.manca)}</div></div>`).join('') : ''}
+  </section>
+  <section class="blk">
+    <h2>Il mese di ${fmtMese(x.k)}</h2>
+    <div class="sumline"><span>Netto prudente</span><span>${fmtE(c.impostazioni.nettoPrudente)}</span></div>
+    <div class="sumline"><span>Spese fisse</span><span>− ${fmtE(x.fisseMese)}</span></div>
+    <div class="sumline"><span>Accantonamenti</span><span>− ${fmtE(x.quote)}</span></div>
+    <div class="sumline total"><span>Per spese variabili ed extra</span><span>${fmtE(x.budgetVar)}</span></div>
+    <div class="sumline"><span>Già spesi (di cui essenziali ${fmtE(x.essMese)})</span><span>− ${fmtE(x.extraMese)}</span></div>
+    <div class="sumline total"><span>Rimasto</span><span class="amt ${x.rimasto<0?'neg':''}">${fmtE(x.rimasto)}</span></div>
+    ${x.cassa!=null?`<p class="small muted" style="margin-top:10px">Liquidità spendibile stimata: ${fmtE(x.cassa)}, esclusi il conto deposito e i soldi degli obiettivi (ultimo saldo inserito il ${fmtD(c.riconciliazione.data)}).</p>`:''}
+  </section>
+  ${hist.length ? `<section class="blk"><h2>Mesi precedenti</h2><div class="tblwrap"><table class="tbl"><tr><th>Mese</th><th>Entrate</th><th>Uscite</th><th>Risparmiato</th><th>Saldo</th></tr>${hist.map(h => `<tr><td style="text-transform:capitalize">${fmtMese(h.mese)}</td><td>${fmtE(h.entrate)}</td><td>${fmtE(h.fisse+h.extra)}</td><td>${fmtE(h.accantonato)}</td><td class="amt ${h.saldo<0?'neg':'pos'}">${fmtE(h.saldo)}</td></tr>`).join('')}</table></div><p class="small muted">Contano solo i movimenti registrati nell'app.</p></section>` : ''}
+  `;
+  main.querySelector('#qAdd').onclick = () => openSpesa();
+  main.querySelector('#qRic').onclick = () => openRic();
+  const qi = main.querySelector('#qInc'); if(qi) qi.onclick = () => openIncasso(x.acc.a);
+}
+
+const CHECK = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.2 3L13 4.5"/></svg>';
+
+function viewFisse(main){
+  const c=S.config, t=today(), key=S.viewKey;
+  const list = c.fisse.filter(f => dovuta(f,key)).slice().sort((a,b)=>a.giorno-b.giorno);
+  const nonDovute = c.fisse.filter(f => fissaAttiva(f,key) && !inCiclo(f,key));
+  let pagate=0, dapagare=0;
+  const rows = list.map(f => {
+    const tk = tickOf(f.id,key); const due = dueIn(f.giorno,key); const on = tk.length>0;
+    const paid = tk.reduce((a,m)=>a+m.importo,0);
+    if(on) pagate+=paid; else dapagare+=f.importo;
+    const late = !on && due < t && key===mkey(t);
+    const meta = on ? `Pagata il ${fmtD(tk[0].data)}` : `${late?'<span class="dot late"></span>Scaduta il ':'Il '}${fmtD(due)}`;
+    return `<div class="row"><button class="tick ${on?'on':''}" data-f="${esc(f.id)}" aria-pressed="${on}" aria-label="${on?'Annulla pagamento':'Segna pagata'}: ${esc(f.nome)}">${on?CHECK:''}</button>
+      <div class="grow"><div class="name">${esc(f.nome)}${f.intoccabile?' <span class="pill">intoccabile</span>':''}</div><div class="meta">${meta} · ${esc(f.conto||'')}${ogniDi(f)>1?' · '+FREQ[ogniDi(f)]:''}${f.variabile?' · importo variabile':''}${f.rata?' · rata':''}</div></div>
+      <div class="amt">${fmtE(on?paid:f.importo)}</div></div>`;
+  }).join('');
+  const incRows = (c.accrediti||[]).map(a => {
+    const ms = movs(key).filter(m => m.tipo==='entrata' && m.rif===a.id);
+    const tot = ms.reduce((s,m)=>s+m.importo,0);
+    return `<div class="row"><div class="grow"><div class="name">${esc(a.nome)}</div><div class="meta">${ms.length ? 'Arrivato: '+ms.map(m=>fmtD(m.data)).join(', ') : 'Data prudente: il '+a.giorno}</div></div><div class="amt ${ms.length?'pos':''}">${ms.length?fmtE(tot):fmtE(a.importo)}</div><button class="btn ghost small" data-inc="${esc(a.id)}">Arrivato</button></div>`;
+  }).join('');
+  const other = movs(key).filter(m => m.tipo==='entrata' && !(c.accrediti||[]).some(a => a.id===m.rif));
+  main.innerHTML = `
+  ${monthNav()}
+  <section class="blk">
+    <h2>Spese fisse</h2>
+    ${rows || '<p class="muted">Nessuna spesa fissa. Aggiungila da "Modifica elenco".</p>'}
+    <div class="sumline total"><span>Pagate</span><span>${fmtE(pagate)}</span></div>
+    <div class="sumline"><span>Ancora da pagare</span><span>${fmtE(dapagare)}</span></div>
+    ${nonDovute.length ? `<h3>Non dovute questo mese</h3>` + nonDovute.map(f => { const ps = prossimaScadenza(f,key); return `<div class="row"><div class="grow"><div class="name">${esc(f.nome)}</div><div class="meta">${FREQ[ogniDi(f)]||'periodica'}${ps?' · prossimo addebito il '+fmtD(ps)+' '+pd(ps).getFullYear():''} · nel budget pesa ${fmtE(f.importo/ogniDi(f))} al mese</div></div><div class="amt muted">${fmtE(f.importo)}</div></div>`; }).join('') : ''}
+    <div class="btns"><button class="btn ghost small" id="editFisse">Modifica elenco</button></div>
+  </section>
+  <section class="blk">
+    <h2>Entrate</h2>
+    ${incRows}
+    ${other.map(m => `<div class="row"><div class="grow"><div class="name">${esc(m.descr||'Entrata')}</div><div class="meta">${fmtD(m.data)}</div></div><div class="amt pos">${fmtE(m.importo)}</div><button class="btn ghost small" data-delmov="${esc(m.id)}">Elimina</button></div>`).join('')}
+    <div class="btns"><button class="btn ghost small" id="addInc">Altra entrata (rimborso, regalo…)</button></div>
+  </section>`;
+  bindMonthNav(main);
+  main.querySelectorAll('[data-f]').forEach(b => b.onclick = () => toggleFissa(b.dataset.f, key));
+  main.querySelectorAll('[data-inc]').forEach(b => b.onclick = () => openIncasso(c.accrediti.find(a => a.id===b.dataset.inc), key));
+  main.querySelectorAll('[data-delmov]').forEach(b => b.onclick = () => { delMov(b.dataset.delmov); render(); toast('Entrata eliminata'); });
+  main.querySelector('#editFisse').onclick = () => openFisseEditor();
+  main.querySelector('#addInc').onclick = () => openIncasso(null, key);
+}
+
+function monthNav(){ return `<div class="monthnav"><button class="btn ghost small" data-mn="-1" aria-label="Mese precedente">‹</button><b>${fmtMese(S.viewKey)}</b><button class="btn ghost small" data-mn="1" aria-label="Mese successivo">›</button></div>`; }
+function bindMonthNav(main){ main.querySelectorAll('[data-mn]').forEach(b => b.onclick = () => { S.viewKey = shiftKey(S.viewKey, +b.dataset.mn); render(); }); }
+
+function toggleFissa(fid, key){
+  const f = S.config.fisse.find(x => x.id===fid); if(!f) return;
+  const tk = tickOf(fid,key);
+  if(tk.length){ tk.forEach(m => delMov(m.id)); render(); toast(f.nome+': segnata come non pagata'); return; }
+  const t=today(); const due = dueIn(f.giorno,key); const data = (mkey(t)===key && due >= t) ? t : due;
+  if(f.variabile || due < t){ openImporto(f, key, data); return; }
+  addMov({tipo:'fissa', rif:f.id, importo:f.importo, data, descr:f.nome, metodo:f.conto==='Amex'?'amex':'conto'});
+  render(); toast(f.nome+': pagata');
+}
+
+function viewSpese(main){
+  const key=S.viewKey; const ex = movs(key).filter(m => m.tipo==='extra').sort((a,b)=>b.data.localeCompare(a.data) || (b.ts||0)-(a.ts||0));
+  const byCat = {}; ex.forEach(m => { byCat[m.cat||'Altro'] = (byCat[m.cat||'Altro']||0) + m.importo; });
+  const tot = ex.reduce((a,m)=>a+m.importo,0);
+  const cats = Object.entries(byCat).sort((a,b)=>b[1]-a[1]);
+  main.innerHTML = `
+  ${monthNav()}
+  <section class="blk">
+    <div class="btns" style="margin-top:0"><button class="btn" id="add">Registra una spesa</button></div>
+  </section>
+  <section class="blk">
+    <h2>Per categoria</h2>
+    ${cats.length ? cats.map(([k,v]) => `<div class="sumline"><span>${esc(k)}${ESSENZIALI.includes(k)?' <span class="muted small">(essenziale)</span>':''}</span><span>${fmtE(v)}</span></div>`).join('') + `<div class="sumline total"><span>Totale</span><span>${fmtE(tot)}</span></div>` : '<p class="muted">Nessuna spesa registrata in questo mese.</p>'}
+  </section>
+  <section class="blk">
+    <h2>Movimenti</h2>
+    ${ex.map(m => `<div class="row"><div class="grow"><div class="name">${esc(m.descr||m.cat)}</div><div class="meta">${fmtD(m.data)} · ${esc(m.cat||'')}${m.metodo==='amex'?' · Amex':''}</div></div><div class="amt">${fmtE(m.importo)}</div><button class="btn ghost small" data-del="${esc(m.id)}" aria-label="Elimina ${esc(m.descr||'')}">Elimina</button></div>`).join('') || '<p class="muted">Registra le spese appena le fai: bastano importo e categoria.</p>'}
+  </section>`;
+  bindMonthNav(main);
+  main.querySelector('#add').onclick = () => openSpesa();
+  main.querySelectorAll('[data-del]').forEach(b => b.onclick = () => { if(confirm('Eliminare questa spesa?')){ delMov(b.dataset.del); render(); toast('Spesa eliminata'); } });
+}
+
+function viewObiettivi(main){
+  const c=S.config, k=mkey(today());
+  const items = c.obiettivi.map(g => {
+    const pct = g.target>0 ? Math.min(100, (g.accantonato||0)/g.target*100) : 0;
+    const nec = necessarioMese(g,k); const vm = versatoMese(g.id,k);
+    let pill = '';
+    if((g.accantonato||0) >= g.target) pill = '<span class="pill">Raggiunto</span>';
+    else if(g.dal && g.dal > k) pill = `<span class="pill warn">Parte a ${fmtMese(g.dal)}</span>`;
+    else if(nec!=null && g.quota < nec - 0.5) pill = `<span class="pill bad">Quota bassa: servono ${fmtE(nec)}/mese</span>`;
+    else if(nec!=null) pill = '<span class="pill">In linea</span>';
+    return `<div class="goal">
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:baseline"><div class="name" style="font-weight:700">${esc(g.nome)}</div><div class="amt">${fmtE(g.accantonato||0)} / ${fmtE(g.target)}</div></div>
+      <div class="bar"><span style="width:${pct}%"></span></div>
+      <div class="meta small muted">Quota ${fmtE(g.quota||0)}/mese${g.scadenza?' · entro il '+fmtD(g.scadenza)+' '+pd(g.scadenza).getFullYear():''} · versati questo mese ${fmtE(vm)}</div>
+      <div style="margin-top:6px">${pill}</div>
+      ${g.note?`<p class="small muted" style="margin-top:6px">${esc(g.note)}</p>`:''}
+      <div class="btns"><button class="btn small" data-v="${esc(g.id)}">Versa</button><button class="btn ghost small" data-p="${esc(g.id)}">Preleva</button><button class="btn ghost small" data-e="${esc(g.id)}">Modifica</button></div>
+    </div>`;
+  }).join('');
+  const quote = c.obiettivi.filter(g => goalAttivo(g,k)).reduce((a,g)=>a+g.quota,0);
+  main.innerHTML = `<section class="blk"><h2>Obiettivi</h2><p class="small muted">Questo mese metti da parte ${fmtE(quote)} in totale. "Versa" sposta soldi dal conto all'obiettivo; "Preleva" li usa (per esempio quando paghi la maxirata).</p>${items || '<p class="muted">Nessun obiettivo.</p>'}<div class="btns"><button class="btn ghost" id="newG">Nuovo obiettivo</button></div></section>`;
+  main.querySelectorAll('[data-v]').forEach(b => b.onclick = () => openVersa(b.dataset.v, 'accantonamento'));
+  main.querySelectorAll('[data-p]').forEach(b => b.onclick = () => openVersa(b.dataset.p, 'prelievo'));
+  main.querySelectorAll('[data-e]').forEach(b => b.onclick = () => openGoalEditor(b.dataset.e));
+  main.querySelector('#newG').onclick = () => openGoalEditor(null);
+}
+
+/* ---------- posso comprarlo? ---------- */
+function valuta(prezzo, aRate, nRate){
+  const x = calc(), c=S.config, imp=c.impostazioni, s=imp.soglie; const r=[]; let v='si'; let rata=null, mesi=null;
+  const fondo = c.obiettivi.find(g => g.tipo==='emergenza');
+  const fondoBasso = fondo && (fondo.accantonato||0) < fondo.target;
+  const hist = storico(3); const media3 = hist.length>=3 ? hist.reduce((a,h)=>a+h.saldo,0)/hist.length : null;
+  if(x.strutturale>0) mesi = Math.ceil(prezzo / x.strutturale);
+  if(aRate){
+    rata = r2(prezzo / nRate);
+    const pctR = (x.rateEsistenti + rata) / imp.nettoPrudente * 100;
+    if(pctR > s.rateMaxPct){ v='no'; r.push(`R1: con questa rata le rate salirebbero da ${fmtE(x.rateEsistenti)} a ${fmtE(x.rateEsistenti+rata)} al mese, il ${fmtPct(pctR)} del netto. Il limite è ${s.rateMaxPct}%.`); }
+    else r.push(`Le rate totali salirebbero al ${fmtPct(pctR)} del netto, sotto il limite del ${s.rateMaxPct}%.`);
+    if(x.strutturale - rata < 0){ v='no'; r.push(`R1: il mese tipo, dopo fisse, accantonamenti e spese essenziali stimate, lascia ${fmtE(x.strutturale)}. Con una rata di ${fmtE(rata)} scenderebbe a ${fmtE(x.strutturale-rata)}.`); }
+    if(media3!=null && media3<0){ v='no'; r.push(`R1: negli ultimi 3 mesi registrati il saldo medio è stato ${fmtE(media3)}.`); }
+    if(fondoBasso) r.push(`Il fondo di emergenza è a ${fmtE(fondo.accantonato||0)} su un minimo di ${fmtE(fondo.target)}: una rata in più riduce il margine per completarlo.`);
+    r.push('Calcolo senza interessi: se il finanziamento ha un TAEG, la rata reale è più alta.');
+  } else if(prezzo >= s.sogliaObiettivo){
+    v='obiettivo'; r.push(`R3: da ${fmtE(s.sogliaObiettivo)} in su un acquisto va pianificato come obiettivo, non deciso sul momento.`);
+    r.push(mesi ? `Con il margine mensile attuale (${fmtE(x.strutturale)} dopo fisse, accantonamenti ed essenziali) servono circa ${mesi} mesi.` + (mesi>24 ? ' Senza liberare margine, con tagli o rinviando un altro obiettivo, non è realistico.' : '') : `Oggi il margine mensile dopo fisse, accantonamenti ed essenziali è ${fmtE(x.strutturale)}: per mettere da parte questa cifra bisogna prima tagliare altre spese o rinviare un obiettivo.`);
+  } else {
+    if(prezzo > x.puoi){
+      if(x.limite==='cassa' && prezzo <= x.rimasto){ v='aspetta'; r.push(x.puoi<=0 ? `Nel budget del mese ci starebbe, ma oggi sul conto non c'è margine: per coprire le spese fisse fino al ${fmtD(x.H)} mancano già ${fmtE(-x.puoi)}. Riparliamone dopo quella data.` : `Nel budget del mese ci starebbe, ma fino al ${fmtD(x.H)} sul conto puoi spendere solo ${fmtE(x.puoi)}. Riparliamone dopo quella data.`); }
+      else { v='no'; r.push(x.puoi<=0 ? `Oggi non c'è margine per nessun extra. Il budget per spese variabili ed extra di questo mese ha ${fmtE(x.rimasto)}.` : `Supera quanto puoi spendere oggi (${fmtE(x.puoi)}). Il budget per spese variabili ed extra di questo mese ha ancora ${fmtE(x.rimasto)}.`); }
+    } else if(prezzo >= s.sogliaExtra){ v='attesa'; r.push(`R3: ci sta (puoi spendere ${fmtE(x.puoi)} oggi), ma è sopra ${fmtE(s.sogliaExtra)}. Aspetta 48 ore e ricontrolla: se lo vuoi ancora, è una scelta e non un impulso.`); }
+    else r.push(`Ci sta: oggi puoi spendere ${fmtE(x.puoi)}, dopo l'acquisto resterebbero ${fmtE(x.puoi-prezzo)}.`);
+    if(fondoBasso && prezzo >= s.sogliaExtra && (v==='si' || v==='attesa')){ v='aspetta'; r.push(`R2 e R4: il fondo di emergenza è a ${fmtE(fondo.accantonato||0)} su un minimo di ${fmtE(fondo.target)}. Prima si completano gli accantonamenti del mese.`); }
+  }
+  r.push('R6: se conti su un risparmio nuovo per pagarlo, vale solo dopo che si è visto nei dati per 3 mesi.');
+  const titoli = {si:'Sì', attesa:'Sì, tra 48 ore', aspetta:'Aspetta', obiettivo:'Diventa un obiettivo', no:'No, non ora'};
+  return {v, titolo:titoli[v], r, rata, mesi};
+}
+
+function viewChiedi(main){
+  main.innerHTML = `
+  <section class="blk">
+    <h2>Posso comprarlo?</h2>
+    <p class="small muted">Applica le tue regole ai numeri di oggi. Non usa Claude, quindi è istantaneo e senza costi.</p>
+    <label class="f"><span>Cosa</span><input type="text" id="cCosa" placeholder="Es. iPhone"></label>
+    <div class="grid2">
+      <label class="f"><span>Prezzo (€)</span><input type="text" inputmode="decimal" id="cPrezzo"></label>
+      <label class="f"><span>Pagamento</span><select id="cModo"><option value="0">Subito</option><option value="1">A rate</option></select></label>
+    </div>
+    <label class="f" id="cRateWrap" hidden><span>Numero di rate</span><input type="number" min="2" max="120" id="cRate" value="20"></label>
+    <div class="btns"><button class="btn" id="cGo">Valuta</button></div>
+    <div id="cOut"></div>
+  </section>
+  <section class="blk">
+    <h2>Chiedi a Claude</h2>
+    <p class="small muted">Scrivi la domanda: l'app prepara un messaggio con i tuoi numeri e le tue regole. Lo copi, apri Claude (va bene anche il piano gratuito) e lo incolli.</p>
+    <label class="f"><span>La tua domanda</span><textarea id="aQ" placeholder="Es. Posso comprare le gomme nuove questo mese?">${esc(S.askText)}</textarea></label>
+    <div class="btns"><button class="btn" id="aGo">Copia per Claude</button><a class="btn ghost" href="https://claude.ai/new" target="_blank" rel="noopener">Apri Claude</a></div>
+    <textarea id="aOut" readonly hidden style="margin-top:10px;min-height:140px"></textarea>
+  </section>
+  <section class="blk">
+    <h2>Le tue regole</h2>
+    <ul class="rules small">${regole().map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+    <p class="small muted">Le soglie si cambiano da Impostazioni.</p>
+  </section>`;
+  const modo = main.querySelector('#cModo'); modo.onchange = () => { main.querySelector('#cRateWrap').hidden = modo.value!=='1'; };
+  main.querySelector('#cGo').onclick = () => {
+    const prezzo = num(main.querySelector('#cPrezzo').value); const out = main.querySelector('#cOut');
+    if(!(prezzo>0)){ out.innerHTML = '<p class="muted" style="margin-top:10px">Inserisci un prezzo.</p>'; return; }
+    const aRate = modo.value==='1'; const n = parseInt(main.querySelector('#cRate').value,10)||0;
+    if(aRate && n<2){ out.innerHTML = '<p class="muted" style="margin-top:10px">Inserisci almeno 2 rate.</p>'; return; }
+    const cosa = main.querySelector('#cCosa').value.trim();
+    const res = valuta(prezzo, aRate, n);
+    S.calc = {cosa, prezzo, aRate, n, res};
+    out.innerHTML = `<div class="verdict v-${res.v}"><h3>${esc(res.titolo)}</h3>${res.rata?`<p class="small">Rata: ${fmtE(res.rata)} × ${n}</p>`:''}<ul>${res.r.map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+      ${(res.v==='obiettivo'||res.v==='no'||res.v==='aspetta') ? `<div class="btns"><button class="btn small" id="mkGoal">Crea l'obiettivo "${esc(cosa||'Acquisto')}"</button></div>`:''}</div>`;
+    const mk = out.querySelector('#mkGoal'); if(mk) mk.onclick = () => openGoalEditor(null, {nome:cosa||'Acquisto', target:prezzo});
+  };
+  const q = main.querySelector('#aQ'), go = main.querySelector('#aGo'), out = main.querySelector('#aOut');
+  q.oninput = () => { S.askText = q.value; };
+  go.onclick = async () => {
+    const domanda = q.value.trim(); if(!domanda){ q.focus(); return; }
+    const testo = promptClaude(domanda);
+    try{ await navigator.clipboard.writeText(testo); out.hidden = true; toast('Copiato: apri Claude e incolla'); }
+    catch(e){ out.hidden = false; out.value = testo; out.focus(); out.select(); toast('Seleziona il testo qui sotto e copialo'); }
+  };
+}
+
+function contesto(){
+  const x = calc(), c=S.config, k=x.k;
+  return {
+    oggi: x.t,
+    impostazioni: c.impostazioni,
+    entrate_attese: c.accrediti,
+    spese_fisse: c.fisse.filter(f => fissaAttiva(f,k)).map(f => ({nome:f.nome, importo:f.importo, frequenza:FREQ[ogniDi(f)], dovuta_questo_mese:inCiclo(f,k), giorno:f.giorno, conto:f.conto, variabile:!!f.variabile, rata:!!f.rata, fine:f.fine||null, intoccabile:!!f.intoccabile, pagata_questo_mese: tickOf(f.id,k).length>0})),
+    obiettivi: c.obiettivi.map(g => ({nome:g.nome, tipo:g.tipo||null, target:g.target, accantonato:g.accantonato||0, quota_mensile:g.quota, scadenza:g.scadenza||null, parte_da:g.dal||null, necessario_al_mese:necessarioMese(g,k), note:g.note||null})),
+    situazione: { liquidita_conti_personali: x.cassa, puoi_spendere_oggi: x.puoi, limitato_da: x.limite, prossima_entrata: x.acc ? {nome:x.acc.a.nome, entro:x.acc.data} : null,
+      fisse_da_pagare_prima_della_prossima_entrata: x.pending.map(p => ({nome:p.f.nome, importo:p.f.importo, data:p.due})),
+      accantonamenti_mancanti_del_mese: x.mancTot, budget_mese_variabili_ed_extra: x.budgetVar, spesi_nel_mese: x.extraMese, rimasto_nel_mese: x.rimasto,
+      rate_attuali_mensili: x.rateEsistenti, margine_mensile_tipo_dopo_essenziali: x.strutturale },
+    spese_del_mese: movs(k).filter(m => m.tipo==='extra').slice(-60).map(m => ({data:m.data, importo:m.importo, categoria:m.cat, descr:m.descr})),
+    storico_mesi: storico(6),
+    ultimo_calcolo_posso_comprarlo: S.calc ? {cosa:S.calc.cosa, prezzo:S.calc.prezzo, a_rate:S.calc.aRate, rate:S.calc.n, esito:S.calc.res.titolo} : null
+  };
+}
+function promptClaude(domanda){
+  return `Sei il consulente finanziario personale di una persona che vive in Italia (lavoratore dipendente, convive nella casa di proprietà del compagno). Rispondi in italiano.
+
+Come rispondere:
+- Inizia con una conclusione netta in una riga: "Sì", "Sì, ma…", "Aspetta fino a …" oppure "No", poi spiega in poche frasi.
+- Ragiona con i numeri qui sotto: importi in euro, percentuali, date. Non inventare dati che non ci sono; se manca qualcosa, dillo e indica quale dato serve.
+- Applica sempre le regole della persona. Se una regola blocca la richiesta, citala (es. "R1").
+- Sii diretto sui punti deboli, senza addolcire, ma con rispetto.
+- Non raccomandare prodotti finanziari specifici. Se serve un professionista (consulente, commercialista, notaio), dillo.
+- Massimo circa 200 parole. Testo semplice, senza tabelle né titoli.
+
+Regole della persona:
+${regole().join('\n')}
+
+Dati attuali dell'app (JSON):
+${JSON.stringify(contesto())}
+
+Domanda: ${domanda}`;
+}
+
+/* ---------- fogli modali ---------- */
+function sheet(html, onMount){
+  const root = document.getElementById('sheetRoot');
+  root.innerHTML = `<div class="sheet-bg" role="presentation"><div class="sheet" role="dialog" aria-modal="true">${html}</div></div>`;
+  const bg = root.querySelector('.sheet-bg');
+  const close = () => { root.innerHTML=''; document.removeEventListener('keydown', onKey); };
+  const onKey = e => { if(e.key==='Escape') close(); };
+  document.addEventListener('keydown', onKey);
+  bg.addEventListener('click', e => { if(e.target===bg) close(); });
+  root.querySelectorAll('[data-close]').forEach(b => b.onclick = close);
+  const first = root.querySelector('input,select,textarea'); if(first) setTimeout(() => first.focus(), 30);
+  if(onMount) onMount(root.querySelector('.sheet'), close);
+}
+
+function openSpesa(){
+  const t=today();
+  sheet(`<h2>Nuova spesa</h2>
+    <label class="f"><span>Importo (€)</span><input type="text" inputmode="decimal" id="sImp"></label>
+    <label class="f"><span>Categoria</span><select id="sCat">${CATEGORIE.map(c => `<option>${esc(c)}</option>`).join('')}</select></label>
+    <label class="f"><span>Descrizione (facoltativa)</span><input type="text" id="sDes"></label>
+    <div class="grid2">
+      <label class="f"><span>Data</span><input type="date" id="sDat" value="${t}"></label>
+      <label class="f"><span>Pagata con</span><select id="sMet"><option value="conto">Conto o carta di debito</option><option value="amex">Carta di credito (Amex)</option></select></label>
+    </div>
+    <div class="btns"><button class="btn" id="sOk">Registra</button><button class="btn ghost" data-close>Annulla</button></div>`,
+  (el, close) => {
+    el.querySelector('#sOk').onclick = () => {
+      const imp = num(el.querySelector('#sImp').value); if(!(imp>0)){ el.querySelector('#sImp').focus(); return; }
+      const data = el.querySelector('#sDat').value || t;
+      addMov({tipo:'extra', importo:imp, cat:el.querySelector('#sCat').value, descr:el.querySelector('#sDes').value.trim(), data, metodo:el.querySelector('#sMet').value});
+      close(); render(); toast('Spesa registrata: '+fmtE(imp));
+    };
+  });
+}
+
+function openImporto(f, key, data){
+  sheet(`<h2>${esc(f.nome)}</h2><p class="small muted">${f.variabile ? 'Importo variabile: scrivi quanto è stato addebitato davvero. ' : ''}Indica la data vera del pagamento: se è prima dell'ultimo aggiornamento del saldo, l'app non la sottrae due volte.</p>
+    <label class="f"><span>Importo (€)</span><input type="text" inputmode="decimal" id="iImp" value="${String(f.importo).replace('.',',')}"></label>
+    <label class="f"><span>Data</span><input type="date" id="iDat" value="${data}"></label>
+    <div class="btns"><button class="btn" id="iOk">Segna pagata</button><button class="btn ghost" data-close>Annulla</button></div>`,
+  (el, close) => { el.querySelector('#iOk').onclick = () => {
+    const imp = num(el.querySelector('#iImp').value); if(!(imp>=0)) return;
+    addMov({tipo:'fissa', rif:f.id, importo:imp, data:el.querySelector('#iDat').value||data, descr:f.nome, metodo:f.conto==='Amex'?'amex':'conto'});
+    close(); render(); toast(f.nome+': pagata');
+  }; });
+}
+
+function openIncasso(a, key){
+  const t=today();
+  sheet(`<h2>${a ? esc(a.nome) : 'Altra entrata'}</h2>
+    ${a ? '' : '<label class="f"><span>Descrizione</span><input type="text" id="eDes" placeholder="Es. rimborso spese"></label>'}
+    <label class="f"><span>Importo arrivato (€)</span><input type="text" inputmode="decimal" id="eImp" value="${a?String(a.importo).replace('.',','):''}"></label>
+    <label class="f"><span>Data</span><input type="date" id="eDat" value="${t}"></label>
+    ${a ? '' : `<p class="small muted">R5: di un'entrata straordinaria, il ${S.config.impostazioni.soglie.straordinariePct}% va a obiettivi e cuscinetto.</p>`}
+    <div class="btns"><button class="btn" id="eOk">Registra</button><button class="btn ghost" data-close>Annulla</button></div>`,
+  (el, close) => { el.querySelector('#eOk').onclick = () => {
+    const imp = num(el.querySelector('#eImp').value); if(!(imp>0)) return;
+    const descr = a ? a.nome : (el.querySelector('#eDes').value.trim() || 'Entrata');
+    addMov({tipo:'entrata', rif:a?a.id:null, importo:imp, data:el.querySelector('#eDat').value||t, descr});
+    close(); render(); toast('Entrata registrata: '+fmtE(imp));
+  }; });
+}
+
+function openRic(){
+  const r = S.config.riconciliazione;
+  sheet(`<h2>Saldo reale dei conti</h2>
+    <p class="small muted">Somma quello che vedi adesso nelle app della banca: conto principale, Revolut (solo conto, non il deposito) e PayPal. Prima registra le spese già fatte, poi aggiorna il saldo.</p>
+    <label class="f"><span>Totale sui conti personali (€)</span><input type="text" inputmode="decimal" id="rSal"></label>
+    <label class="f"><span>Carta di credito: speso e non ancora addebitato (€)</span><input type="text" inputmode="decimal" id="rAmex" value="${r && r.amexDaAddebitare ? String(r.amexDaAddebitare).replace('.',',') : '0'}"></label>
+    <p class="small muted">Metti qui l'addebito della carta che deve ancora uscire dal conto, anche se è già annunciato per domani. Scrivi 0 solo quando è uscito davvero e il saldo sopra lo comprende già.</p>
+    ${r ? `<p class="small muted">Ultimo aggiornamento: ${fmtD(r.data)}, ${fmtE(r.saldoConti)} sui conti.</p>` : ''}
+    <div class="btns"><button class="btn" id="rOk">Salva</button><button class="btn ghost" data-close>Annulla</button></div>`,
+  (el, close) => { el.querySelector('#rOk').onclick = () => {
+    const s = num(el.querySelector('#rSal').value); const a = num(el.querySelector('#rAmex').value)||0;
+    if(!isFinite(s)){ el.querySelector('#rSal').focus(); return; }
+    S.config.riconciliazione = {data:today(), ts:Date.now(), saldoConti:r2(s), amexDaAddebitare:r2(a)};
+    saveConfig(); close(); render(); toast('Saldo aggiornato');
+  }; });
+}
+
+function openVersa(gid, tipo){
+  const g = S.config.obiettivi.find(x => x.id===gid); if(!g) return;
+  const k = mkey(today()); const def = tipo==='accantonamento' ? Math.max(0, r2(g.quota - versatoMese(g.id,k))) : '';
+  sheet(`<h2>${tipo==='accantonamento'?'Versa su':'Preleva da'} ${esc(g.nome)}</h2>
+    <p class="small muted">${tipo==='accantonamento' ? 'Fai prima il bonifico verso il conto dove tieni questo obiettivo, poi registralo qui.' : (g.tipo==='emergenza' ? 'R4: il fondo di emergenza si usa solo per imprevisti non rimandabili. Se lo usi, ricostituirlo diventa la priorità del mese dopo.' : 'Il prelievo torna sul conto e aumenta quanto puoi spendere, finché non lo usi per lo scopo previsto.')}</p>
+    <label class="f"><span>Importo (€)</span><input type="text" inputmode="decimal" id="vImp" value="${def!==''?String(def).replace('.',','):''}"></label>
+    <div class="btns"><button class="btn" id="vOk">Conferma</button><button class="btn ghost" data-close>Annulla</button></div>`,
+  (el, close) => { el.querySelector('#vOk').onclick = () => {
+    const imp = num(el.querySelector('#vImp').value); if(!(imp>0)) return;
+    if(tipo==='prelievo' && imp > (g.accantonato||0) + 0.001){ toast('Sull\'obiettivo ci sono solo '+fmtE(g.accantonato||0)); return; }
+    g.accantonato = r2((g.accantonato||0) + (tipo==='accantonamento' ? imp : -imp));
+    addMov({tipo, rif:g.id, importo:imp, data:today(), descr:g.nome});
+    saveConfig(); close(); render(); toast(tipo==='accantonamento' ? 'Versati '+fmtE(imp) : 'Prelevati '+fmtE(imp));
+  }; });
+}
+
+function openGoalEditor(gid, preset){
+  const g = gid ? S.config.obiettivi.find(x => x.id===gid) : Object.assign({id:newId(), nome:'', target:0, accantonato:0, quota:0, scadenza:'', dal:'', note:'', tipo:''}, preset||{});
+  sheet(`<h2>${gid?'Modifica obiettivo':'Nuovo obiettivo'}</h2>
+    <label class="f"><span>Nome</span><input type="text" id="gN" value="${esc(g.nome)}"></label>
+    <div class="grid2">
+      <label class="f"><span>Cifra da raggiungere (€)</span><input type="text" inputmode="decimal" id="gT" value="${g.target||''}"></label>
+      <label class="f"><span>Già accantonato (€)</span><input type="text" inputmode="decimal" id="gA" value="${g.accantonato||0}"></label>
+      <label class="f"><span>Scadenza</span><input type="date" id="gS" value="${esc(g.scadenza||'')}"></label>
+      <label class="f"><span>Parte dal mese</span><input type="month" id="gD" value="${esc(g.dal||'')}"></label>
+    </div>
+    <label class="f"><span>Quota mensile (€)</span><input type="text" inputmode="decimal" id="gQ" value="${g.quota||''}"></label>
+    <p class="small muted" id="gHint"></p>
+    <label class="f"><span>Note</span><input type="text" id="gNo" value="${esc(g.note||'')}"></label>
+    <label class="check"><input type="checkbox" id="gE" ${g.tipo==='emergenza'?'checked':''}> È il fondo di emergenza</label>
+    <div class="btns"><button class="btn" id="gOk">Salva</button><button class="btn ghost" data-close>Annulla</button>${gid?'<button class="btn danger" id="gDel">Elimina</button>':''}</div>`,
+  (el, close) => {
+    const hint = () => { const tmp = {target:num(el.querySelector('#gT').value)||0, accantonato:num(el.querySelector('#gA').value)||0, scadenza:el.querySelector('#gS').value, dal:el.querySelector('#gD').value}; const n = necessarioMese(tmp, mkey(today())); el.querySelector('#gHint').textContent = n!=null ? `Per arrivare in tempo servono ${fmtE(n)} al mese.` : ''; };
+    ['#gT','#gA','#gS','#gD'].forEach(s => el.querySelector(s).addEventListener('input', hint)); hint();
+    el.querySelector('#gOk').onclick = () => {
+      const nome = el.querySelector('#gN').value.trim(); const target = num(el.querySelector('#gT').value);
+      if(!nome || !(target>0)){ toast('Servono un nome e una cifra'); return; }
+      Object.assign(g, {nome, target:r2(target), accantonato:r2(num(el.querySelector('#gA').value)||0), quota:r2(num(el.querySelector('#gQ').value)||0), scadenza:el.querySelector('#gS').value||'', dal:el.querySelector('#gD').value||'', note:el.querySelector('#gNo').value.trim(), tipo:el.querySelector('#gE').checked?'emergenza':''});
+      if(!gid) S.config.obiettivi.push(g);
+      saveConfig(); close(); render(); toast('Obiettivo salvato');
+    };
+    const d = el.querySelector('#gDel'); if(d) d.onclick = () => { if(confirm('Eliminare l\'obiettivo? I movimenti già registrati restano.')){ S.config.obiettivi = S.config.obiettivi.filter(x => x.id!==gid); saveConfig(); close(); render(); } };
+  });
+}
+
+function openFisseEditor(){
+  const list = S.config.fisse.slice().sort((a,b)=>a.giorno-b.giorno);
+  sheet(`<h2>Spese fisse</h2><p class="small muted">Tocca una voce per modificarla.</p>
+    ${list.map(f => `<div class="row"><div class="grow"><div class="name">${esc(f.nome)}</div><div class="meta">Giorno ${f.giorno} · ${FREQ[ogniDi(f)]||''} · ${esc(f.conto||'')}${f.fine?' · fino a '+esc(f.fine):''}</div></div><div class="amt">${fmtE(f.importo)}</div><button class="btn ghost small" data-ed="${esc(f.id)}">Modifica</button></div>`).join('')}
+    <div class="btns"><button class="btn" id="fNew">Aggiungi spesa fissa</button><button class="btn ghost" data-close>Chiudi</button></div>`,
+  (el) => {
+    el.querySelectorAll('[data-ed]').forEach(b => b.onclick = () => openFissaForm(b.dataset.ed));
+    el.querySelector('#fNew').onclick = () => openFissaForm(null);
+  });
+}
+function openFissaForm(fid){
+  const f = fid ? S.config.fisse.find(x => x.id===fid) : {id:newId(), nome:'', importo:0, giorno:1, conto:'BPM', variabile:false, rata:false, fine:'', intoccabile:false, ogni:1, ultimo:''};
+  sheet(`<h2>${fid?'Modifica':'Nuova'} spesa fissa</h2>
+    <label class="f"><span>Nome</span><input type="text" id="xN" value="${esc(f.nome)}"></label>
+    <div class="grid2">
+      <label class="f"><span>Importo (€)</span><input type="text" inputmode="decimal" id="xI" value="${f.importo||''}"></label>
+      <label class="f"><span>Giorno del mese</span><input type="number" min="1" max="31" id="xG" value="${f.giorno}"></label>
+      <label class="f"><span>Conto</span><input type="text" id="xC" value="${esc(f.conto||'')}"></label>
+      <label class="f"><span>Ultimo mese (se finisce)</span><input type="month" id="xF" value="${esc(f.fine||'')}"></label>
+      <label class="f"><span>Frequenza</span><select id="xQ">${Object.entries(FREQ).map(([n,l]) => `<option value="${n}" ${ogniDi(f)==n?'selected':''}>${l}</option>`).join('')}</select></label>
+      <label class="f"><span>Ultimo mese addebitato</span><input type="month" id="xU" value="${esc(f.ultimo||'')}"></label>
+    </div>
+    <p class="small muted">Per le spese non mensili l'importo è quello di ogni addebito (es. il trimestre intero). Serve l'ultimo mese addebitato per calcolare i successivi.</p>
+    <label class="check"><input type="checkbox" id="xV" ${f.variabile?'checked':''}> L'importo cambia ogni mese</label>
+    <label class="check"><input type="checkbox" id="xR" ${f.rata?'checked':''}> È una rata di un finanziamento</label>
+    <label class="check"><input type="checkbox" id="xT" ${f.intoccabile?'checked':''}> Intoccabile (R8)</label>
+    <div class="btns"><button class="btn" id="xOk">Salva</button><button class="btn ghost" id="xBack">Indietro</button>${fid?'<button class="btn danger" id="xDel">Elimina</button>':''}</div>`,
+  (el, close) => {
+    el.querySelector('#xBack').onclick = () => openFisseEditor();
+    el.querySelector('#xOk').onclick = () => {
+      const nome = el.querySelector('#xN').value.trim(); const imp = num(el.querySelector('#xI').value); const g = parseInt(el.querySelector('#xG').value,10);
+      if(!nome || !(imp>=0) || !(g>=1 && g<=31)){ toast('Controlla nome, importo e giorno'); return; }
+      const ogni = parseInt(el.querySelector('#xQ').value,10)||1; const ultimo = el.querySelector('#xU').value||'';
+      if(ogni>1 && !ultimo){ toast('Indica l\'ultimo mese addebitato'); return; }
+      Object.assign(f, {ogni, ultimo, nome, importo:r2(imp), giorno:g, conto:el.querySelector('#xC').value.trim(), fine:el.querySelector('#xF').value||'', variabile:el.querySelector('#xV').checked, rata:el.querySelector('#xR').checked, intoccabile:el.querySelector('#xT').checked});
+      if(!fid) S.config.fisse.push(f);
+      saveConfig(); render(); openFisseEditor(); toast('Spesa fissa salvata');
+    };
+    const d = el.querySelector('#xDel'); if(d) d.onclick = () => { if(confirm('Eliminare "'+f.nome+'"? Se è solo finita, meglio impostare l\'ultimo mese.')){ S.config.fisse = S.config.fisse.filter(x => x.id!==fid); saveConfig(); render(); openFisseEditor(); } };
+  });
+}
+
+function openSettings(){
+  const c=S.config, imp=c.impostazioni, s=imp.soglie;
+  sheet(`<h2>Impostazioni</h2>
+    <h3>Entrate</h3>
+    <label class="f"><span>Netto mensile prudente (€)</span><input type="text" inputmode="decimal" id="tN" value="${imp.nettoPrudente}"></label>
+    ${(c.accrediti||[]).map((a,i) => `<div class="grid2"><label class="f"><span>${esc(a.nome)}: importo atteso</span><input type="text" inputmode="decimal" data-ai="${i}" value="${a.importo}"></label><label class="f"><span>Giorno prudente</span><input type="number" min="1" max="31" data-ag="${i}" value="${a.giorno}"></label></div>`).join('')}
+    <h3>Margini</h3>
+    <div class="grid2">
+      <label class="f"><span>Cuscinetto minimo sul conto (€)</span><input type="text" inputmode="decimal" id="tC" value="${imp.cuscinetto}"></label>
+      <label class="f"><span>Spesa e carburante stimati al mese (€)</span><input type="text" inputmode="decimal" id="tE" value="${imp.essenziali}"></label>
+      <label class="f"><span>Rate pagate dal conto comune (€)</span><input type="text" inputmode="decimal" id="tR" value="${imp.rateContoComune||0}"></label>
+    </div>
+    <h3>Soglie delle regole</h3>
+    <div class="grid2">
+      <label class="f"><span>R1 · Rate massime (% del netto)</span><input type="number" id="s1" value="${s.rateMaxPct}"></label>
+      <label class="f"><span>R3 · Soglia attesa 48 ore (€)</span><input type="number" id="s3" value="${s.sogliaExtra}"></label>
+      <label class="f"><span>R3 · Soglia obiettivo (€)</span><input type="number" id="s3b" value="${s.sogliaObiettivo}"></label>
+      <label class="f"><span>R6 · Mesi di prova</span><input type="number" id="s6" value="${s.provaMesi}"></label>
+      <label class="f"><span>R5 · % a obiettivi</span><input type="number" id="s5" value="${s.straordinariePct}"></label>
+    </div>
+    <div class="btns"><button class="btn" id="tOk">Salva</button><button class="btn ghost" data-close>Chiudi</button></div>
+    <h3>Backup</h3>
+    <p class="small muted">I dati sono solo su questo telefono. Esporta un backup almeno una volta al mese e scegli "Salva su File", poi iCloud Drive.</p>
+    <div class="btns"><button class="btn ghost small" id="bJ">Esporta backup (JSON)</button><button class="btn ghost small" id="bC">Esporta movimenti (CSV)</button><label class="btn ghost small" style="display:inline-block">Ripristina backup<input type="file" id="bI" accept="application/json,.json" hidden></label></div>
+    <h3>Aspetto</h3>
+    <div class="btns"><button class="btn ghost small" data-th="">Automatico</button><button class="btn ghost small" data-th="light">Chiaro</button><button class="btn ghost small" data-th="dark">Scuro</button></div>`,
+  (el, close) => {
+    el.querySelector('#tOk').onclick = () => {
+      imp.nettoPrudente = r2(num(el.querySelector('#tN').value)||imp.nettoPrudente);
+      el.querySelectorAll('[data-ai]').forEach(i => { const v=num(i.value); if(v>0) c.accrediti[+i.dataset.ai].importo = r2(v); });
+      el.querySelectorAll('[data-ag]').forEach(i => { const v=parseInt(i.value,10); if(v>=1&&v<=31) c.accrediti[+i.dataset.ag].giorno = v; });
+      imp.cuscinetto = r2(num(el.querySelector('#tC').value)||0); imp.essenziali = r2(num(el.querySelector('#tE').value)||0); imp.rateContoComune = r2(num(el.querySelector('#tR').value)||0);
+      const gi = (id,d) => { const v = parseFloat(el.querySelector(id).value); return isFinite(v) ? v : d; };
+      s.rateMaxPct = gi('#s1',s.rateMaxPct); s.sogliaExtra = gi('#s3',s.sogliaExtra); s.sogliaObiettivo = gi('#s3b',s.sogliaObiettivo); s.provaMesi = gi('#s6',s.provaMesi); s.straordinariePct = gi('#s5',s.straordinariePct);
+      saveConfig(); close(); render(); toast('Impostazioni salvate');
+    };
+    el.querySelector('#bJ').onclick = () => scarica('conti-in-tasca-backup-'+today()+'.json', JSON.stringify({config:S.config, mesi:S.mesi}, null, 2));
+    el.querySelector('#bC').onclick = () => {
+      const rows = [['data','tipo','importo','categoria','descrizione','metodo']];
+      allMovs().slice().sort((a,b)=>a.data.localeCompare(b.data)).forEach(m => rows.push([m.data, m.tipo, String(m.importo).replace('.',','), m.cat||'', (m.descr||'').replace(/"/g,'""'), m.metodo||'']));
+      scarica('conti-in-tasca-movimenti-'+today()+'.csv', rows.map(r => r.map(v => `"${v}"`).join(';')).join('\n'));
+    };
+    el.querySelector('#bI').onchange = async e => {
+      const file = e.target.files[0]; if(!file) return;
+      try{ const d = JSON.parse(await file.text()); if(!d.config || !d.config.impostazioni) throw 0;
+        if(!confirm('Sostituire tutti i dati attuali con quelli del backup?')) return;
+        S.config = d.config; S.mesi = d.mesi || {}; await saveConfig(); await saveMese(Object.keys(S.mesi)[0] || mkey(today()));
+        close(); render(); toast('Backup ripristinato');
+      }catch(err){ toast('File non valido: serve un backup esportato da questa app.'); }
+    };
+    el.querySelectorAll('[data-th]').forEach(b => b.onclick = () => { const v=b.dataset.th; if(v) document.documentElement.setAttribute('data-theme', v); else document.documentElement.removeAttribute('data-theme'); try{ localStorage.setItem('cit:theme', v); }catch(e){} });
+  });
+}
+
+async function scarica(filename, data){
+  const type = filename.endsWith('.json') ? 'application/json' : 'text/csv';
+  const file = new File([data], filename, {type});
+  const segna = () => { if(filename.endsWith('.json')){ try{ localStorage.setItem('cit:lastBackup', today()); }catch(e){} render(); } };
+  try{
+    if(navigator.canShare && navigator.canShare({files:[file]})){ await navigator.share({files:[file]}); segna(); return; }
+  }catch(e){ if(e && e.name==='AbortError') return; }
+  const url = URL.createObjectURL(file); const a = document.createElement('a'); a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 5000); segna();
+}
+
+let toastT;
+function toast(msg){
+  let el = document.querySelector('.toast'); if(!el){ el = document.createElement('div'); el.className='toast'; el.setAttribute('role','status'); document.body.appendChild(el); }
+  el.textContent = msg; clearTimeout(toastT); toastT = setTimeout(() => el.remove(), 2600);
+}
+
+try{ const th = localStorage.getItem('cit:theme'); if(th) document.documentElement.setAttribute('data-theme', th); }catch(e){}
+init();
+</script>
+</body>
+</html>
